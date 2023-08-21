@@ -5,7 +5,9 @@ import { Delete } from "@mui/icons-material";
 
 export const Comment = ({ id }: { id: string }) => {
   const dispatch = useAppDispatch();
-  const comment = useAppSelector((state) => selectCommentById(state, id));
+  const comment = useAppSelector((state) => ({
+    ...selectCommentById(state, id),
+  }));
   if (!comment) {
     return null;
   }

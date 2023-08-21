@@ -1,5 +1,4 @@
-import { Paper, Typography, Stack, TextField } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
+import { Paper, Typography, Stack, TextField, Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { useState } from "react";
 import { addPost } from "../slices/posts";
@@ -28,10 +27,9 @@ export const CreatePost = () => {
           multiline
           minRows={2}
         />
-        <LoadingButton
-          loading={createLoading}
+        <Button
           variant="contained"
-          disabled={!title || !body}
+          disabled={!title || !body || createLoading}
           onClick={() => {
             dispatch(addPost({ title, body }))
               .unwrap()
@@ -42,7 +40,7 @@ export const CreatePost = () => {
           }}
         >
           Create
-        </LoadingButton>
+        </Button>
       </Stack>
     </Paper>
   );

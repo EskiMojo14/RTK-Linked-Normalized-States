@@ -1,5 +1,4 @@
-import { Stack, TextField } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
+import { Stack, TextField, Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { useState } from "react";
 import { selectLoading } from "../slices/fetches";
@@ -24,11 +23,10 @@ export const CreateComment = ({ postId }: { postId: string }) => {
           backgroundColor: (theme) => theme.palette.common.white,
         }}
       />
-      <LoadingButton
-        loading={createLoading}
+      <Button
         variant="outlined"
         color="secondary"
-        disabled={!body}
+        disabled={!body || createLoading}
         onClick={() => {
           dispatch(addComment({ postId, body }))
             .unwrap()
@@ -38,7 +36,7 @@ export const CreateComment = ({ postId }: { postId: string }) => {
         }}
       >
         Create
-      </LoadingButton>
+      </Button>
     </Stack>
   );
 };
