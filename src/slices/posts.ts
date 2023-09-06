@@ -20,7 +20,7 @@ export const postAdapter = createEntityAdapter<Post>({
   sortComparer: (a, b) => b.created - a.created,
 });
 
-interface PostState extends EntityState<Post, string> {}
+type PostState = EntityState<Post, string>;
 
 export const postSlice = createSlice({
   name: "posts",
@@ -68,11 +68,21 @@ export const postSlice = createSlice({
     }),
   }),
   extraReducers: (builder) => {
-    builder.addCase(addComment.fulfilled, (state, { payload }) => {
-      state.entities[payload.postId]?.commentIds.push(
-        commentAdapter.selectId(payload),
-      );
-    });
+    builder
+      .addCase(addComment.fulfilled, (state, { payload }) => {
+        state.entities[payload.postId]?.commentIds.push(
+          commentAdapter.selectId(payload),
+        );
+      })
+      .addCase(deleteComment.fulfilled, (state, { payload, meta: { arg } }) => {
+        if (payload?.postId) {
+          const commentIds = state.entities[payload.postId]?.commentIds;
+          const idx = commentIds?.indexOf(arg);
+          if (typeof idx === "number" && idx > -1) {
+            commentIds?.splice(idx);
+          }
+        }
+      });
   },
   selectors: {
     selectPosts: (state) => state,

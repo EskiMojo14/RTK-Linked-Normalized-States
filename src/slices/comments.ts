@@ -3,6 +3,7 @@ import {
   createSlice,
   createEntityAdapter,
 } from "@reduxjs/toolkit";
+import { RootState } from ".";
 import { wait } from "../utils";
 import { deletePost } from "./posts";
 
@@ -17,7 +18,7 @@ export const commentAdapter = createEntityAdapter<Comment>({
   sortComparer: (a, b) => a.created - b.created,
 });
 
-interface CommentState extends EntityState<Comment, string> {}
+type CommentState = EntityState<Comment, string>;
 
 export const commentSlice = createSlice({
   name: "comments",
@@ -35,11 +36,17 @@ export const commentSlice = createSlice({
         fulfilled: commentAdapter.setOne,
       },
     ),
-    deleteComment: create.asyncThunk((id: string) => wait(100), {
-      fulfilled: (state, action) => {
-        commentAdapter.removeOne(state, action.meta.arg);
+    deleteComment: create.asyncThunk(
+      async (id: string, { getState }): Promise<Comment | undefined> => {
+        await wait(100);
+        return selectCommentById(getState() as RootState, id);
       },
-    }),
+      {
+        fulfilled: (state, action) => {
+          commentAdapter.removeOne(state, action.meta.arg);
+        },
+      },
+    ),
   }),
   extraReducers: (builder) => {
     builder.addCase(deletePost.fulfilled, (state, action) => {
